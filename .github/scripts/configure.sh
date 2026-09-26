@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# 用 clang++ 冒充 g++，让 build 机通过 clang 检查
 mkdir -p $HOME/bin
 ln -sf /usr/bin/clang++ $HOME/bin/g++
 ln -sf /usr/bin/clang   $HOME/bin/gcc
@@ -19,7 +18,6 @@ export AR="$NDK_TOOLCHAIN/bin/llvm-ar"
 export STRIP="$NDK_TOOLCHAIN/bin/llvm-strip"
 export NM="$NDK_TOOLCHAIN/bin/llvm-nm"
 export OBJCOPY="$NDK_TOOLCHAIN/bin/llvm-objcopy"
-
 export PATH="$HOME/bin:$BOOT_JDK/bin:$PATH"
 
 bash configure \
@@ -33,6 +31,11 @@ bash configure \
   --with-extra-cflags="-fPIC -D__ANDROID_API__=$API -O2" \
   --with-extra-cxxflags="-fPIC -D__ANDROID_API__=$API -O2" \
   --with-extra-ldflags="-fuse-ld=lld -Wl,-z,max-page-size=16384" \
+  --with-alsa=disabled \
+  --with-cups=disabled \
+  --with-fontconfig=disabled \
+  --with-freetype=disabled \
+  --with-x=disabled \
   --disable-warnings-as-errors \
   --enable-headless-only \
   --with-jvm-variants=server \
