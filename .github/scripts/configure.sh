@@ -11,11 +11,20 @@ export AR="$NDK_TOOLCHAIN/bin/llvm-ar"
 export STRIP="$NDK_TOOLCHAIN/bin/llvm-strip"
 export NM="$NDK_TOOLCHAIN/bin/llvm-nm"
 export OBJCOPY="$NDK_TOOLCHAIN/bin/llvm-objcopy"
+
+# build 机必须也是 clang
+export BUILD_CC=/usr/bin/clang
+export BUILD_CXX=/usr/bin/clang++
+export BUILD_AR=/usr/bin/ar
+export BUILD_STRIP=/usr/bin/strip
+export BUILD_NM=/usr/bin/nm
+
 export PATH="$BOOT_JDK/bin:$PATH"
 
 bash configure \
   --openjdk-target=$TARGET \
   --with-sysroot=$SYSROOT \
+  --with-toolchain-type=clang \
   --with-boot-jdk=$BOOT_JDK \
   --with-devkit=$NDK_TOOLCHAIN \
   --with-extra-cflags="-fPIC -D__ANDROID_API__=$API -O2" \
