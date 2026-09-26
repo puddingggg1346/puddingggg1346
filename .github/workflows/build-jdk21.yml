@@ -14,7 +14,7 @@ jobs:
       - name: Install deps
         run: |
           sudo apt update
-          sudo apt install -y autoconf zip unzip wget file build-essential \
+          sudo apt install -y autoconf zip unzip wget file build-essential clang \
             libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev \
             libcups2-dev libfontconfig1-dev libasound2-dev
 
@@ -24,7 +24,7 @@ jobs:
           unzip -q android-ndk-r26b-linux.zip
           echo "NDK=$PWD/android-ndk-r26b" >> $GITHUB_ENV
 
-      - name: Download OpenJDK 21
+      - name: Download OpenJDK 21 + boot JDK
         run: |
           wget -q https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz
           tar -xf openjdk-21.0.2_linux-x64_bin.tar.gz
