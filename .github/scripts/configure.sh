@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+
+# 让 build 机 cc/c++ 指向 clang
+sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
+sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
+
 NDK_TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64"
 SYSROOT="$NDK_TOOLCHAIN/sysroot"
 TARGET=aarch64-linux-android
@@ -11,13 +16,6 @@ export AR="$NDK_TOOLCHAIN/bin/llvm-ar"
 export STRIP="$NDK_TOOLCHAIN/bin/llvm-strip"
 export NM="$NDK_TOOLCHAIN/bin/llvm-nm"
 export OBJCOPY="$NDK_TOOLCHAIN/bin/llvm-objcopy"
-
-# build 机必须也是 clang
-export BUILD_CC=/usr/bin/clang
-export BUILD_CXX=/usr/bin/clang++
-export BUILD_AR=/usr/bin/ar
-export BUILD_STRIP=/usr/bin/strip
-export BUILD_NM=/usr/bin/nm
 
 export PATH="$BOOT_JDK/bin:$PATH"
 
