@@ -9,16 +9,13 @@ export CC="$NDK_TOOLCHAIN/bin/${TARGET}${API}-clang"
 export CXX="$NDK_TOOLCHAIN/bin/${TARGET}${API}-clang++"
 export AR="$NDK_TOOLCHAIN/bin/llvm-ar"
 export STRIP="$NDK_TOOLCHAIN/bin/llvm-strip"
-export BUILD_CC=clang
-export BUILD_CXX=clang++
+export NM="$NDK_TOOLCHAIN/bin/llvm-nm"
+export OBJCOPY="$NDK_TOOLCHAIN/bin/llvm-objcopy"
 export PATH="$BOOT_JDK/bin:$PATH"
 
 bash configure \
   --openjdk-target=$TARGET \
   --with-sysroot=$SYSROOT \
-  --with-toolchain-type=clang \
-  --with-build-cc=clang \
-  --with-build-cxx=clang++ \
   --with-boot-jdk=$BOOT_JDK \
   --with-devkit=$NDK_TOOLCHAIN \
   --with-extra-cflags="-fPIC -D__ANDROID_API__=$API -O2" \
