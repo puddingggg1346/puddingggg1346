@@ -1,9 +1,12 @@
 #!/bin/bash
 set -e
 
-# 让 build 机 cc/c++ 指向 clang
-sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
-sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
+# 用 clang++ 冒充 g++，让 build 机通过 clang 检查
+mkdir -p $HOME/bin
+ln -sf /usr/bin/clang++ $HOME/bin/g++
+ln -sf /usr/bin/clang   $HOME/bin/gcc
+ln -sf /usr/bin/clang++ $HOME/bin/c++
+ln -sf /usr/bin/clang   $HOME/bin/cc
 
 NDK_TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64"
 SYSROOT="$NDK_TOOLCHAIN/sysroot"
@@ -17,9 +20,11 @@ export STRIP="$NDK_TOOLCHAIN/bin/llvm-strip"
 export NM="$NDK_TOOLCHAIN/bin/llvm-nm"
 export OBJCOPY="$NDK_TOOLCHAIN/bin/llvm-objcopy"
 
-export PATH="$BOOT_JDK/bin:$PATH"
+export PATH="$HOME/bin:$BOOT_JDK/bin:$PATH"
 
 bash configure \
+  BUILD_CC=/usr/bin/clang \
+  BUILD_CXX=/usr/bin/clang++ \
   --openjdk-target=$TARGET \
   --with-sysroot=$SYSROOT \
   --with-toolchain-type=clang \
