@@ -1,0 +1,54 @@
+name: Build JDK21 Android aarch64
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/scripts/**']
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt update
+          sudo apt install -y autoconf zip unzip wget file build-essential \
+            libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev \
+            libcups2-dev libfontconfig1-dev libasound2-dev
+
+      - name: Download NDK
+        run: |
+          wget -q https://dl.google.com/android/repository/android-ndk-r26b-linux.zip
+          unzip -q android-ndk-r26b-linux.zip
+          echo "NDK=$PWD/android-ndk-r26b" >> $GITHUB_ENV
+
+      - name: Download OpenJDK 21
+        run: |
+          wget -q https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz
+          tar -xf openjdk-21.0.2_linux-x64_bin.tar.gz
+          mv jdk-21.0.2 boot-jdk
+          echo "BOOT_JDK=$PWD/boot-jdk" >> $GITHUB_ENV
+          git clone --depth 1 --branch jdk-21.0.2-ga https://github.com/openjdk/jdk21u.git jdk-src
+
+      - name: Apply Android patches
+        run: bash .github/scripts/patch.sh
+
+      - name: Configure
+        working-directory: jdk-src
+        run: bash $GITHUB_WORKSPACE/.github/scripts/configure.sh
+
+      - name: Build
+        working-directory: jdk-src
+        run: make images CONF=android-aarch64 JOBS=$(nproc) 2>&1 | tail -100
+
+      - name: Package
+        run: |
+          cd jdk-src/build/android-aarch64/jdk
+          zip -qr $GITHUB_WORKSPACE/jre21-aarch64.zip . -x "demo/*" "man/*" "include/*" "*.dSYM/*"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jre21-aarch64
+          path: jre21-aarch64.zip
